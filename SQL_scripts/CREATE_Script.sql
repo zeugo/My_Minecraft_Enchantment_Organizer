@@ -1,7 +1,10 @@
 DROP TABLE IF EXISTS Enchantment_category_Category
-DROP TABLE IF EXISTS [Type]
-DROP TABLE IF EXISTS Enchantment 
+DROP TABLE IF EXISTS Villager_trade_Item
+DROP TABLE IF EXISTS Item
 DROP TABLE IF EXISTS Category
+DROP TABLE IF EXISTS [Type]
+DROP TABLE IF EXISTS Enchantment
+DROP TABLE IF EXISTS Villager
 
 
 CREATE TABLE Enchantment(
@@ -10,6 +13,7 @@ CREATE TABLE Enchantment(
 	[Description] NVARCHAR(2000),
 	[Obtained] INT,
 	[MaxLevel] INT,
+    [Curse] BIT,
 	CONSTRAINT PK_Encahntmnet_Id PRIMARY KEY CLUSTERED (Id)
 )
 GO
@@ -30,7 +34,16 @@ GO
 
 CREATE TABLE Enchantment_category_Category(
 	Id_Enchantment INT REFERENCES Enchantment (Id),
-	Id_Category INT REFERENCES Category (Id)
+	Id_Category INT REFERENCES Category (Id),
+    CONSTRAINT PK_Enchatment_Category_Ids PRIMARY KEY CLUSTERED (Id_Enchantment, Id_Category)
+)
+GO
+
+CREATE TABLE Villager(
+    Id INT IDENTITY(1,1),
+    [Profession] NVARCHAR(50) CONSTRAINT UQ_Villager_Profession UNIQUE,
+    [Workstation] NVARCHAR(50) CONSTRAINT UQ_Villager_Workstation UNIQUE,
+    CONSTRAINT PK_Villager_Id PRIMARY KEY CLUSTERED (Id)
 )
 GO
 
@@ -38,78 +51,90 @@ CREATE TABLE Item(
 	Id INT IDENTITY(1,1),
 	[Name] NVARCHAR(255),
 	[Obtained] INT,
-	[Type] NVARCHAR(20),
-	[Id_Category] INT REFERENCES Category (Id)
-
+	[Id_Category] INT REFERENCES Category (Id),
+    CONSTRAINT PK_Item_Id PRIMARY KEY CLUSTERED (Id)
 )
-
-INSERT INTO Enchantment ([Name], [Description], [Obtained], [MaxLevel]) VALUES
---All purpose
-('Mending', 'Repairs the item when gaining XP orbs.', 1, 1),
-('Unbreaking', 'Increases item durability.', 1, 3),
-('Curse of Vanishing', 'Item destroyed upon death.', 1, 1),
-
---Armour
-('Aqua Affinity', 'Increase the rate of underwater mining speed.', 1, 1),
-('Blast Protection', 'Reduces explosion damage and knockback.', 0, 4),
-('Curse of Binding', 'Items cannot be removed from armor slots unless the cause is death or breaking.', 0, 1),
-('Depth Strider', 'Increases underwater movement speed.', 1, 3),
-('Feather Falling', 'Reduces fall damage.', 1, 4),
-('Fire Protection', 'Reduces fire damage and burn time.', 0, 4),
-('Frost Walker', 'Changes the water source blocks beneath the player into frosted ice and prevents the damage the player would take from standing on magma blocks.', 0, 2),
-('Projectile Protection', 'Reduces projectile damage.', 0, 4),
-('Protection', 'Reduces most types of damage by 4% for each level.', 1, 4),
-('Respiration', 'Extends underwater breathing time.', 1, 3),
-('Soul Speed', 'Increases walking speed on soul sand and soul soil.', -1, 3),
-('Thorns', 'Reflects some of the damage taken when hit, at the cost of reducing durability.', 0, 3),
-('Swift Sneak', 'Increased player speed when crouching.', -1, 3),
-
---Melee weapons
-('Bane of Arthropods', 'Increases damage and applies Slowness IV to arthropod mobs (spiders, cave spiders, silverfish, endermites and bees).', 0, 5),
-('Fire Aspect', 'Sets target on fire.', 0, 2),
-('Looting', 'Increases amount of loot earned from mobs.', 1, 3),
-('Knockback', 'Knocks back mobs away from you when hit.', 1, 2),
-('Sharpness', 'Increases weapon damage.', 1, 5),
-('Smite', 'Increases damage to undead mobs.', 1, 5),
-('Sweeping Edge', 'Increases sweeping attack damage. Available only in Java Edition', 1, 3),
-
---Ranged Weapons
-('Channeling', 'Trident channels a bolt of lightning toward a hit entity. Functions only during thunderstorms and if the target is unobstructed by opaque blocks.', 0, 1),
-('Flame', 'Arrows set targets on fire.', 1, 1),
-('Impaling', 'Trident deals additional damage to mobs that spawn naturally in the ocean.', 1, 5),
-('Infinity', 'Shooting with projectiles does not consume arrows.', 0, 1),
-('Loyalty', 'Trident returns after being thrown. Higher levels reduce the return time.', 0, 3),
-('Riptide', 'Trident launches player with itself when thrown. Functions only in water or rain.', 0, 3),
-('Multishot', 'Shoot 3 arrows at the cost of one; only one arrow can be recovered.', 0, 1),
-('Piercing', 'Arrows pass through multiple entities', 0, 4),
-('Power', 'Increases arrow damage.', 1, 5),
-('Punch', 'Increases arrow knockback.', 1, 2),
-('Quick Charge', 'Decreases crossbow charging time.', 0, 3),
-
---Tools
-('Efficiency', 'Increases mining speed.', 1, 5),
-('Fortune', 'Increases certain item drop chances from blocks.', 1, 3),
-('Luck of the Sea', 'Increases rate of fishing rare loot (enchanting books, etc.)', 0, 3),
-('Lure', 'Decreases wait time until fish/junk/loot “bites”', 0, 3),
-('Silk Touch', 'Mined blocks will drop as blocks instead of breaking into other items/blocks.', 1, 1)
 GO
 
-INSERT INTO 
+CREATE TABLE Villager_trade_Item(
+    Id_Villager INT REFERENCES Villager (Id),
+    Id_Item INT REFERENCES Item (Id),
+    CONSTRAINT PK_Villager_Item_Ids PRIMARY KEY CLUSTERED (Id_Villager, Id_Item)
+)
 
-INSERT INTO Category ([Name]) VALUES
+INSERT INTO Enchantment ([Name], [Description], [Obtained], [MaxLevel], [Curse]) VALUES
+--All purpose
+('Mending', 'Repairs the item when gaining XP orbs.', 1, 1, 0),
+('Unbreaking', 'Increases item durability.', 1, 3, 0),
+('Curse of Vanishing', 'Item destroyed upon death.', 1, 1, 1),
+
+--Armour
+('Aqua Affinity', 'Increase the rate of underwater mining speed.', 1, 1, 0),
+('Blast Protection', 'Reduces explosion damage and knockback.', 0, 4, 0),
+('Curse of Binding', 'Items cannot be removed from armor slots unless the cause is death or breaking.', 0, 1, 1),
+('Depth Strider', 'Increases underwater movement speed.', 1, 3, 0),
+('Feather Falling', 'Reduces fall damage.', 1, 4, 0),
+('Fire Protection', 'Reduces fire damage and burn time.', 0, 4, 0),
+('Frost Walker', 'Changes the water source blocks beneath the player into frosted ice and prevents the damage the player would take from standing on magma blocks.', 0, 2, 0),
+('Projectile Protection', 'Reduces projectile damage.', 0, 4, 0),
+('Protection', 'Reduces most types of damage by 4% for each level.', 1, 4, 0),
+('Respiration', 'Extends underwater breathing time.', 1, 3, 0),
+('Soul Speed', 'Increases walking speed on soul sand and soul soil.', -1, 3, 0),
+('Thorns', 'Reflects some of the damage taken when hit, at the cost of reducing durability.', 0, 3, 0),
+('Swift Sneak', 'Increased player speed when crouching.', -1, 3, 0),
+
+--Melee weapons
+('Bane of Arthropods', 'Increases damage and applies Slowness IV to arthropod mobs (spiders, cave spiders, silverfish, endermites and bees).', 0, 5, 0),
+('Fire Aspect', 'Sets target on fire.', 0, 2, 0),
+('Looting', 'Increases amount of loot earned from mobs.', 1, 3, 0),
+('Knockback', 'Knocks back mobs away from you when hit.', 1, 2, 0),
+('Sharpness', 'Increases weapon damage.', 1, 5, 0),
+('Smite', 'Increases damage to undead mobs.', 1, 5, 0),
+('Sweeping Edge', 'Increases sweeping attack damage. Available only in Java Edition', 1, 3, 0),
+
+--Ranged Weapons
+('Channeling', 'Trident channels a bolt of lightning toward a hit entity. Functions only during thunderstorms and if the target is unobstructed by opaque blocks.', 0, 1, 0),
+('Flame', 'Arrows set targets on fire.', 1, 1, 0),
+('Impaling', 'Trident deals additional damage to mobs that spawn naturally in the ocean.', 1, 5, 0),
+('Infinity', 'Shooting with projectiles does not consume arrows.', 0, 1, 0),
+('Loyalty', 'Trident returns after being thrown. Higher levels reduce the return time.', 0, 3, 0),
+('Riptide', 'Trident launches player with itself when thrown. Functions only in water or rain.', 0, 3, 0),
+('Multishot', 'Shoot 3 arrows at the cost of one; only one arrow can be recovered.', 0, 1, 0),
+('Piercing', 'Arrows pass through multiple entities', 0, 4, 0),
+('Power', 'Increases arrow damage.', 1, 5, 0),
+('Punch', 'Increases arrow knockback.', 1, 2, 0),
+('Quick Charge', 'Decreases crossbow charging time.', 0, 3, 0),
+
+--Tools
+('Efficiency', 'Increases mining speed.', 1, 5, 0),
+('Fortune', 'Increases certain item drop chances from blocks.', 1, 3, 0),
+('Luck of the Sea', 'Increases rate of fishing rare loot (enchanting books, etc.)', 0, 3, 0),
+('Lure', 'Decreases wait time until fish/junk/loot “bites”', 0, 3, 0),
+('Silk Touch', 'Mined blocks will drop as blocks instead of breaking into other items/blocks.', 1, 1, 0)
+GO
+
+INSERT INTO [Type] ([Name]) VALUES
+('Armour'),
+('Melee Weapons'),
+('Ranged Weapons'),
 ('Tools'),
-('Fishing Rod'),
-('Bow'),
-('Crossbow'),
-('Trident'),
-('Sword'),
-('Axe'),
-('Helmet'),
-('Chestplate'),
-('Leggings'),
-('Boots'),
-('Shield'),
-('Elytra')
+('Misc')
+GO
+
+INSERT INTO Category ([Name], [Id_Type]) VALUES
+('Tools', 4),
+('Fishing Rod', 4),
+('Bow', 3),
+('Crossbow', 3),
+('Trident', 3),
+('Sword', 2),
+('Axe', 4),
+('Helmet', 1),
+('Chestplate', 1),
+('Leggings', 1),
+('Boots', 1),
+('Shield', 5),
+('Elytra', 5)
 GO
 
 INSERT INTO Enchantment_category_Category VALUES 
@@ -217,3 +242,28 @@ INSERT INTO Enchantment_category_Category VALUES
 (38,2),
 (39,1),
 (39,7)
+GO
+
+INSERT INTO Villager ([Profession], [Workstation]) VALUES
+('Armourer', 'Blast Furnace'),
+('Butcher', 'Smoker'),
+('Cartographer', 'Cartography Table'),
+('Cleric', 'Brewing Stand'),
+('Farmer', 'Composter'),
+('Fisherman', 'Barrel'),
+('Fletcher', 'Fletching Table'),
+('Leatherworker', 'Cauldron'),
+('Librerian', 'Lectern'),
+('Mason', 'Stonecutter'),
+('Shepard', 'Loom'),
+('Toolsmith', 'Smithing Table'),
+('Weaponsmith', 'Grindstone')
+GO
+
+INSERT INTO Item([Name], [Obtained], [Id_Category]) VALUES
+('Pickaxe', 0, 1),
+('Shovel', 0, 1),
+('Hoe', 0, 1),
+('Axe', 0, 1),
+('Sword', 0, 6),
+('Bow', 0, 3)
