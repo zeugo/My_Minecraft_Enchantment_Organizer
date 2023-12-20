@@ -266,4 +266,27 @@ INSERT INTO Item([Name], [Obtained], [Id_Category]) VALUES
 ('Hoe', 0, 1),
 ('Axe', 0, 1),
 ('Sword', 0, 6),
-('Bow', 0, 3)
+('Bow', 0, 3),
+('Crossbow', 0, 4),
+('Helmet', 0, 8),
+('Chestplate', 0, 9),
+('Leggings', 0, 10),
+('Boots', 0, 11),
+('Shield', 0, 12),
+('Elytra', -1, 13)
+
+
+INSERT INTO Villager_trade_Item([Id_Item], [Id_Villager]) VALUES
+(1,12),
+(2,12),
+(3,12),
+(4,12),
+(4,13),
+(5,13),
+(6,7),
+(7,7),
+(8,1),
+(9,1),
+(10,1),
+(11,1),
+(12,1)
