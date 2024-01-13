@@ -16,18 +16,18 @@ api = MC_API("MSI", "MC_Data")
 def main():
     main_frame = tk.Frame(root, width=width, height=height)
     main_frame.place(x=0,y=0)
+    
     button_enchantment = tk.Button(main_frame, text="Enchantment", command=encahntment)
-    button_enchantment.place(x=10,y=10)
+    button_enchantment.grid(row=0,column=0)
     
 
 
 def encahntment():
     encahntment_frame = tk.Frame(root, width=width, height=height)
-    encahntment_frame.place(x=0,y=0)
-    button_main = tk.Button(encahntment_frame, text="Main", command=main)
-    button_main.place(x=0,y=0)
+    encahntment_frame.place(x = 0, y = 0)
     
-    encahntment
+    button_main = tk.Button(encahntment_frame, text = "Main", command = main)
+    button_main.grid(row=0,column=0)
 
 
 def item():
